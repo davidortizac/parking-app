@@ -2,18 +2,22 @@ version: '3.9'
 
 services:
   frontend:
-    build:       
+    build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "3000:3000"
     environment:
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - backend
+    command: ["npm", "run", "dev", "--", "--host"]
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
@@ -22,6 +26,8 @@ services:
       - DATABASE_URL=postgresql://admin:secret@db:5432/parqueadero
     depends_on:
       - db
+    volumes:
+      - ./backend:/app
 
   db:
     image: postgres:14
